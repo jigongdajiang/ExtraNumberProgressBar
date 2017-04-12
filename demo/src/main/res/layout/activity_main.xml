@@ -18,12 +18,65 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="带文字带tab"/>
             <com.daimajia.numberprogressbar.NumberProgressBar
                 android:id="@+id/numberbar1"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 custom:progress_current="0"
                 style="@style/NumberProgressBar_Default" />
+
+            <TextView
+                android:layout_marginTop="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="只有文字没有Tab"/>
+            <com.daimajia.numberprogressbar.NumberProgressBar
+                android:id="@+id/numberbar2"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                custom:progress_current="0"
+                style="@style/NumberProgressBar_Default2" />
+
+            <TextView
+                android:layout_marginTop="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="没有文字只有Tab"/>
+            <com.daimajia.numberprogressbar.NumberProgressBar
+                android:id="@+id/numberbar3"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                custom:progress_current="0"
+                style="@style/NumberProgressBar_Default3" />
+
+            <TextView
+                android:layout_marginTop="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="没有文字没有tab"/>
+            <com.daimajia.numberprogressbar.NumberProgressBar
+                android:id="@+id/numberbar4"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                custom:progress_current="0"
+                style="@style/NumberProgressBar_Default4" />
+
+            <TextView
+                android:layout_marginTop="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="数字也能大于100"/>
+            <com.daimajia.numberprogressbar.NumberProgressBar
+                android:id="@+id/numberbar5"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                custom:progress_current="0"
+                style="@style/NumberProgressBar_Default" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

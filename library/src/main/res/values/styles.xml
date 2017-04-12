@@ -18,6 +18,19 @@
 
     </style>
 
+    <style name="NumberProgressBar_Default2" parent="NumberProgressBar_Default">
+        <item name="progress_round_visibility">invisible</item>
+        <item name="progress_text_visibility">visible</item>
+        <item name="progress_text_color">#000000</item>
+    </style>
+    <style name="NumberProgressBar_Default3" parent="NumberProgressBar_Default">
+        <item name="progress_round_visibility">visible</item>
+        <item name="progress_text_visibility">invisible</item>
+    </style>
+    <style name="NumberProgressBar_Default4" parent="NumberProgressBar_Default">
+        <item name="progress_round_visibility">invisible</item>
+        <item name="progress_text_visibility">invisible</item>
+    </style>
     <style name="NumberProgressBar_Passing_Green">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
