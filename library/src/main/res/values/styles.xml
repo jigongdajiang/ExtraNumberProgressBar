@@ -13,6 +13,7 @@
         <item name="progress_text_color">#ffffff</item>
 
         <item name="progress_round_visibility">visible</item>
+        <item name="progress_text_visibility">visible</item>
         <item name="progress_text_offset">3dp</item>
 
     </style>

@@ -343,10 +343,14 @@ public class NumberProgressBar extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (mIfDrawText) {
-            calculateDrawRectF();
-        } else {
-            calculateDrawRectFWithoutProgressText();
+        if(mIfDrawRound && mIfDrawText){
+            calculateTextAndRound();
+        }else if(mIfDrawText){
+            calculateText();
+        }else if(mIfDrawRound){
+            calculateRound();
+        }else{
+            calculateWithout();
         }
         if (mDrawReachedBar) {
             canvas.drawRect(mReachedRectF, mReachedBarPaint);
@@ -360,6 +364,116 @@ public class NumberProgressBar extends View {
         }
         if (mIfDrawText)
             canvas.drawText(mCurrentDrawText, mDrawTextStart, mDrawTextEnd, mTextPaint);
+    }
+
+    private void calculateWithout() {
+        //计算Round活动区域的真实宽度
+        float actionWtidth = getWidth() - getPaddingLeft() - getPaddingRight();
+        int rate = getProgress() <= getMax() ? getProgress() : getMax();
+        mReachedRectF.left = getPaddingLeft();
+        mReachedRectF.top = getHeight() / 2.0f - mReachedBarHeight / 2.0f;
+        mReachedRectF.bottom = getHeight() / 2.0f + mReachedBarHeight / 2.0f;
+        mReachedRectF.right = mReachedRectF.left + actionWtidth / (getMax() * 1.0f) * rate;
+
+        mUnreachedRectF.left = mReachedRectF.right;
+        mUnreachedRectF.right = getWidth() - getPaddingRight();
+        mUnreachedRectF.top = getHeight() / 2.0f + -mUnreachedBarHeight / 2.0f;
+        mUnreachedRectF.bottom = getHeight() / 2.0f + mUnreachedBarHeight / 2.0f;
+    }
+
+    private void calculateRound() {
+        mRoundHeight = 30 + mOffset*2;
+        mRoundWidth = 60 + mRoundHeight;
+        mRoundRadius = mRoundHeight/2;
+
+        //计算Round活动区域的真实宽度
+        float actionWtidth = getWidth() - getPaddingLeft() - getPaddingRight() - mRoundWidth;
+
+        //计算Round的活动区域
+        mRoundRectF.top = getHeight() / 2.0f - mRoundHeight / 2.0f;
+        mRoundRectF.bottom = getHeight() / 2.0f + mRoundHeight / 2.0f;
+        int rate = getProgress() <= getMax() ? getProgress() : getMax();
+        mRoundRectF.left = getPaddingLeft() + actionWtidth / (getMax() * 1.0f) * rate;
+        mRoundRectF.right = mRoundRectF.left+mRoundWidth;
+
+        //根据Round区域确定进度区域
+        mReachedRectF.left = getPaddingLeft();
+        mReachedRectF.top = getHeight() / 2.0f - mReachedBarHeight / 2.0f;
+        mReachedRectF.bottom = getHeight() / 2.0f + mReachedBarHeight / 2.0f;
+        mReachedRectF.right = mRoundRectF.left;
+
+        //根据Round区域确定非进度区域
+        mUnreachedRectF.left = mRoundRectF.right;
+        mUnreachedRectF.right = getWidth() - getPaddingRight();
+        mUnreachedRectF.top = getHeight() / 2.0f + -mUnreachedBarHeight / 2.0f;
+        mUnreachedRectF.bottom = getHeight() / 2.0f + mUnreachedBarHeight / 2.0f;
+    }
+
+    private void calculateText() {
+        //计算Text的Width
+        mCurrentDrawText = String.format("%d", getProgress() * 100 / getMax());
+        mCurrentDrawText = mPrefix + mCurrentDrawText + mSuffix;
+        mDrawTextWidth = mTextPaint.measureText(mCurrentDrawText);
+
+        //计算Text活动区域的真实宽度
+        float actionWtidth = getWidth() - getPaddingLeft() - getPaddingRight() - mDrawTextWidth;
+        int rate = getProgress() <= getMax() ? getProgress() : getMax();
+        mDrawTextStart = getPaddingLeft() + actionWtidth / (getMax() * 1.0f) * rate;
+        mDrawTextEnd = (int) ((getHeight() / 2.0f) - ((mTextPaint.descent() + mTextPaint.ascent()) / 2.0f));
+        float textRight = mDrawTextStart + mDrawTextWidth;
+
+        //计算进度区域
+        mReachedRectF.left = getPaddingLeft();
+        mReachedRectF.top = getHeight() / 2.0f - mReachedBarHeight / 2.0f;
+        mReachedRectF.bottom = getHeight() / 2.0f + mReachedBarHeight / 2.0f;
+        mReachedRectF.right = mDrawTextStart;
+
+        //计算非进度区域
+        mUnreachedRectF.left = textRight;
+        mUnreachedRectF.right = getWidth() - getPaddingRight();
+        mUnreachedRectF.top = getHeight() / 2.0f + -mUnreachedBarHeight / 2.0f;
+        mUnreachedRectF.bottom = getHeight() / 2.0f + mUnreachedBarHeight / 2.0f;
+
+    }
+
+    private void calculateTextAndRound() {
+        //计算Text的Width
+        mCurrentDrawText = String.format("%d", getProgress() * 100 / getMax());
+        mCurrentDrawText = mPrefix + mCurrentDrawText + mSuffix;
+        mDrawTextWidth = mTextPaint.measureText(mCurrentDrawText);
+
+        //根据Text的Width计算Round的大小
+        float des = mTextPaint.descent();
+        float asc = mTextPaint.ascent();
+        mRoundHeight = -(des + asc) + mOffset*2;
+        mRoundWidth = mDrawTextWidth + mRoundHeight;
+        mRoundRadius = mRoundHeight/2;
+
+        //计算Round活动区域的真实宽度
+        float actionWtidth = getWidth() - getPaddingLeft() - getPaddingRight() - mRoundWidth;
+
+        //计算Round的活动区域
+        mRoundRectF.top = getHeight() / 2.0f - mRoundHeight / 2.0f;
+        mRoundRectF.bottom = getHeight() / 2.0f + mRoundHeight / 2.0f;
+        int rate = getProgress() <= getMax() ? getProgress() : getMax();
+        mRoundRectF.left = getPaddingLeft() + actionWtidth / (getMax() * 1.0f) * rate;
+        mRoundRectF.right = mRoundRectF.left+mRoundWidth;
+
+        //根据Round区域确定文字的位置
+        mDrawTextStart = (mRoundRectF.left)+ mRoundRadius;
+        mDrawTextEnd = (int) ((getHeight() / 2.0f) - ((mTextPaint.descent() + mTextPaint.ascent()) / 2.0f));
+
+        //根据Round区域确定进度区域
+        mReachedRectF.left = getPaddingLeft();
+        mReachedRectF.top = getHeight() / 2.0f - mReachedBarHeight / 2.0f;
+        mReachedRectF.bottom = getHeight() / 2.0f + mReachedBarHeight / 2.0f;
+        mReachedRectF.right = mRoundRectF.left;
+
+        //根据Round区域确定非进度区域
+        mUnreachedRectF.left = mRoundRectF.right;
+        mUnreachedRectF.right = getWidth() - getPaddingRight();
+        mUnreachedRectF.top = getHeight() / 2.0f + -mUnreachedBarHeight / 2.0f;
+        mUnreachedRectF.bottom = getHeight() / 2.0f + mUnreachedBarHeight / 2.0f;
     }
 
     /**
@@ -378,93 +492,6 @@ public class NumberProgressBar extends View {
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setColor(mTextColor);
         mTextPaint.setTextSize(mTextSize);
-    }
-    private void calculateDrawRoundRect() {
-        if(mIfDrawRound){
-            mRoundRectF.top = getHeight() / 2.0f - mRoundHeight / 2.0f;
-            mRoundRectF.bottom = getHeight() / 2.0f + mRoundHeight / 2.0f;
-            if (getProgress() == 0) {
-                mRoundRectF.left = getPaddingLeft();
-            }else{
-                mRoundRectF.left = (mReachedRectF.right);
-            }
-            mRoundRectF.right = mRoundRectF.left+mRoundWidth;
-        }
-    }
-    private void calculateDrawRectFWithoutProgressText() {
-        mReachedRectF.left = getPaddingLeft();
-        mReachedRectF.top = getHeight() / 2.0f - mReachedBarHeight / 2.0f;
-        mReachedRectF.right = (getWidth() - getPaddingLeft() - getPaddingRight()) / (getMax() * 1.0f) * getProgress() + getPaddingLeft();
-        mReachedRectF.bottom = getHeight() / 2.0f + mReachedBarHeight / 2.0f;
-        calculateDrawRoundRect();
-        if(mIfDrawRound){
-            mUnreachedRectF.left = mRoundRectF.right;
-        }else {
-            mUnreachedRectF.left = mReachedRectF.right;
-        }
-        mUnreachedRectF.right = getWidth() - getPaddingRight();
-        mUnreachedRectF.top = getHeight() / 2.0f + -mUnreachedBarHeight / 2.0f;
-        mUnreachedRectF.bottom = getHeight() / 2.0f + mUnreachedBarHeight / 2.0f;
-
-    }
-
-    private void calculateDrawRectF() {
-        mCurrentDrawText = String.format("%d", getProgress() * 100 / getMax());
-        mCurrentDrawText = mPrefix + mCurrentDrawText + mSuffix;
-        mDrawTextWidth = mTextPaint.measureText(mCurrentDrawText);
-        if(mIfDrawRound){
-            float des = mTextPaint.descent();
-            float asc = mTextPaint.ascent();
-            mRoundHeight = -(des + asc) + mOffset*2;
-            mRoundWidth = mDrawTextWidth + mRoundHeight;
-            mRoundRadius = mRoundHeight/2;
-        }
-        if (getProgress() == 0) {
-            mDrawReachedBar = false;
-            if(mIfDrawRound){
-                mDrawTextStart = getPaddingLeft() + mRoundRadius;
-            }else{
-                mDrawTextStart = getPaddingLeft();
-            }
-        } else {
-            mDrawReachedBar = true;
-            mReachedRectF.left = getPaddingLeft();
-            mReachedRectF.top = getHeight() / 2.0f - mReachedBarHeight / 2.0f;
-            if(mIfDrawRound){
-                mReachedRectF.right = (getWidth() - getPaddingLeft() - getPaddingRight()) / (getMax() * 1.0f) * getProgress()  + getPaddingLeft();
-                if(mReachedRectF.right + mRoundWidth >= getWidth() - getPaddingRight()){
-                    mReachedRectF.right = getWidth() - getPaddingRight() - mRoundWidth;
-                }
-            }else{
-                mReachedRectF.right = (getWidth() - getPaddingLeft() - getPaddingRight()) / (getMax() * 1.0f) * getProgress() - mOffset + getPaddingLeft();
-                if((mDrawTextStart + mDrawTextWidth) >= getWidth() - getPaddingRight()){
-                    mReachedRectF.right = getWidth() - getPaddingRight() - mDrawTextWidth;
-                }
-            }
-            mReachedRectF.bottom = getHeight() / 2.0f + mReachedBarHeight / 2.0f;
-            if(mIfDrawRound){
-                mDrawTextStart = (mReachedRectF.right)+ mRoundRadius;
-            }else{
-                mDrawTextStart = (mReachedRectF.right - mOffset);
-            }
-        }
-        mDrawTextEnd = (int) ((getHeight() / 2.0f) - ((mTextPaint.descent() + mTextPaint.ascent()) / 2.0f));
-        calculateDrawRoundRect();
-        float unreachedBarStart = 0;
-        if(mIfDrawRound){
-            unreachedBarStart = mRoundRectF.right;
-        }else{
-            unreachedBarStart = mDrawTextStart + mDrawTextWidth + mOffset;
-        }
-        if (unreachedBarStart >= getWidth() - getPaddingRight()) {
-            mDrawUnreachedBar = false;
-        } else {
-            mDrawUnreachedBar = true;
-            mUnreachedRectF.left = unreachedBarStart;
-            mUnreachedRectF.right = getWidth() - getPaddingRight();
-            mUnreachedRectF.top = getHeight() / 2.0f + -mUnreachedBarHeight / 2.0f;
-            mUnreachedRectF.bottom = getHeight() / 2.0f + mUnreachedBarHeight / 2.0f;
-        }
     }
 
     /**
@@ -583,7 +610,7 @@ public class NumberProgressBar extends View {
     }
 
     public void setProgress(int progress) {
-        if (progress <= getMax() && progress >= 0) {
+        if (progress >= 0) {
             this.mCurrentProgress = progress;
             invalidate();
         }
