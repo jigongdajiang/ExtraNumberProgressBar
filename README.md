@@ -1,3 +1,4 @@
+在原来的基础上加上了圆角矩形背景，并对源代码进行了简单优化
 ##Android NumberProgressBar [![Build Status](https://travis-ci.org/daimajia/NumberProgressBar.png?branch=master)](https://travis-ci.org/daimajia/NumberProgressBar)
 
 -----
